@@ -1,0 +1,47 @@
+#!/bin/bash
+# rather than footer about with opening apps etc, this bash
+# script simply opens the appropriate apps at the appropriate place
+
+openApps=''
+
+while getopts "sfcpm:" opt; do
+  case $opt in
+    s) openApps="open -a Spotify;$openApps";;
+    f) openApps="open -a Firefox\ Developer\ Edition;$openApps";;
+    c) openApps="open -a Google\ Chrome;$openApps";;
+    p) openApps="open -a Postman;$openApps";;
+    m) openApps="open -a MongoDB\ Compass\ Community;$openApps";;
+    \?) echo "💣  Invalid option: -$opt";;
+  esac
+done; shift $(( OPTIND - 1 ))
+
+siteDir=~/Sites/$1
+
+echo "📂  Attempting to open \"$1\" directory..."
+
+function openStuff {
+  echo '👨‍💻  Opening iTerm and setting up sessions...'
+  osascript ./gowork.applescript "$siteDir" && # automates the iTerm side of things
+
+  cd $siteDir &&
+
+  echo '👩🏼‍💻  Opening VsCode...'
+  code . &&
+  echo '⚡️  Opening other apps...'
+  eval $openApps &&
+  echo '🎉  Done!'
+}
+
+if [ -e $siteDir ]; then
+  openStuff;
+else
+  echo "🤦🏽‍  Uh Oh! directory \"$1\" does not exist in ~/Sites, create it? (y/n)"
+  read answer
+  if [ $answer == 'y' ]; then
+    echo '📁  Creating directory...'
+    mkdir $siteDir
+    openStuff;
+  else
+    echo '👋🏽  Okay then, by for now.'
+  fi
+fi
