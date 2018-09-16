@@ -4,6 +4,8 @@
 
 openApps=''
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+
 while getopts "sfcpm:" opt; do
   case $opt in
     s) openApps="open -a Spotify;$openApps";;
@@ -21,7 +23,7 @@ echo "📂  Attempting to open \"$1\" directory..."
 
 function openStuff {
   echo '👨‍💻  Opening iTerm and setting up sessions...'
-  osascript ./gowork.applescript "$siteDir" && # automates the iTerm side of things
+  osascript $DIR/gowork.applescript "$siteDir" && # automates the iTerm side of things
 
   cd $siteDir &&
 
